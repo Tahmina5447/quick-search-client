@@ -7,12 +7,15 @@ import React, { useState } from "react";
 import { LuLogOut } from "react-icons/lu";
 import NavbarAvatar, { adminLinkData, sellerLinkData } from "@/shared/NavbarAvatar";
 import { useRouter } from "next/navigation";
+import { useSelector } from "react-redux";
+import { selectUser } from "@/redux/features/auth/authSlice";
 
 function DashboardNav() {
   const [popupShow, setPopupShow] = useState(false);
   const [drawerVisible, setDrawerVisible] = useState(false);
   const router = useRouter();
-  const user = JSON.parse(localStorage.getItem("user"));
+  // const user = JSON.parse(localStorage.getItem("user"));
+  const user=useSelector(selectUser)
 
 
   const handleOpenChange = (newOpen) => {
@@ -84,7 +87,7 @@ function DashboardNav() {
     <div className="w-full flex items-center justify-center h-[80px] bg-white shadow-lg">
       <div className=" flex items-center w-full justify-between px-5 gap-2">
         <Link href={"/"}>
-          <Image
+          <img
             src={"/assets/logo.png"}
             width={100}
             height={100}
@@ -94,9 +97,9 @@ function DashboardNav() {
         </Link>
 
         <div className="flex justify-center items-center gap-3">
-          <div className="first-letter:uppercase bg-primary/15 px-3 text-sm py-1 text-gray-500 rounded-full">
+          <h2 className="first-letter:uppercase bg-primary/15 px-3 text-sm py-1 text-gray-500 rounded-full">
             {user?.user_role}
-          </div>
+          </h2>
           <div className=" hidden md:block">
             {user?.user_role === "seller" ? (
               <>

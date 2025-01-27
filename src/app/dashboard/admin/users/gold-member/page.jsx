@@ -1,4 +1,4 @@
-import GoldUser from '@/components/Dashboard/AllUser/GoldUser'
+import GoldUser from '@/components/Dashboard/AllSellers/GoldUser'
 import React from 'react'
 
 const Gold = () => {

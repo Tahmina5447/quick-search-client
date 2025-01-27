@@ -1,8 +1,7 @@
 "use client";
 
 import React, { useContext, useEffect, useState } from "react";
-import { ContextData } from "../../../../context/dataProviderContext";
-import { propertiesGet } from "../../../../apis/properties.api";
+// import { propertiesGet } from "../../../../apis/properties.api";
 import PropertySearch from "@/shared/search/PropertySearch";
 import MyPropertyAdminTable from "@/components/Dashboard/Properties/MyPropertyAdminTable";
 import Loader from "@/shared/Loader";
@@ -11,73 +10,138 @@ import { IoIosAddCircle, IoIosAddCircleOutline } from "react-icons/io";
 import { useRouter } from "next/navigation";
 import BreakCame from "@/shared/BreakCame";
 import { TbFilter } from "react-icons/tb";
-
-function MyProperties() {
+import { useSelector } from "react-redux";
+import { selectUser } from "@/redux/features/auth/authSlice";
+import {
+  useDeletePropertyMutation,
+  useGetPropertyQuery,
+} from "@/redux/features/propertyApi";
+import StatusButton from "@/shared/ActionButton/StatusButton";
+import EditButton from "@/shared/ActionButton/EditButton";
+import DeleteButton from "@/shared/ActionButton/DeleteButton";
+import CustomTable from "@/shared/Table/CustomTable";
+import VeiwButton from "@/shared/ActionButton/VeiwButton";
+import Link from "next/link";
+import SellerDetailsModal from "@/components/Dashboard/AllSellers/SellerDetailsModal";
+function AllProperties() {
   const router = useRouter();
-
-  const {
-    searchQuery,
-    currentlyLoggedIn,
-    clearFilter,
-    limit,
-    page,
-    setPage,
-    token,
-  } = useContext(ContextData);
-  const [filterData, setFilterData] = useState([]);
-  const [loading, setLoading] = useState(false);
-  const [update, setUpdate] = useState();
-  const [client, setClient] = useState(false);
-  const [totalItems, setTotalItems] = useState(10);
+  const user = useSelector(selectUser);
+  const [query,setQuery]=useState('')
+  const [searchValue, setSearchValue] = useState('');
+  const { data, isLoading, error } = useGetPropertyQuery(query);
+  useEffect(()=>{
+    if(searchValue){
+      setQuery(`search=${searchValue}`)
+    }else(setQuery(''))
+  },[searchValue])
+  const [
+    deleteProperty,
+    { isLoading: deletePropertyLoading, error: deletePropertyError },
+  ] = useDeletePropertyMutation();
+  const allProperty = data?.data?.properties;
   const [drawerVisible, setDrawerVisible] = useState(false);
+  const [sellerDetailsModalOpen, setSellerDetailsModalOpen] = useState(false);
+  const [getSeller, setGetSeller] = useState(null);
 
   const toggleDrawer = () => {
     setDrawerVisible(!drawerVisible);
   };
 
-  const user="admin"
+  const columns = [
+    {
+      title: "S/N",
+      key: "_id",
+      render: (row, record, index) => (
+        <span className="text-[14px] font-normal text-info">{index + 1}</span>
+      ),
+      width: "20px",
+    },
+    {
+      title: "Image",
+      render: (row) => (
+        <>
+          <img
+            src={row?.property_images[0]}
+            width={50}
+            height={50}
+            alt="Property"
+            className=" w-[40px] h-[40px] rounded-md"
+          />
+        </>
+      ),
+      width: "70px",
+    },
+    {
+      title: "Title",
+      key: "_id",
+      render: (row) => (
+        <span className=" text-[14px] font-normal text-info">
+          {row?.property_name}
+        </span>
+      ),
+    },
 
-  useEffect(() => {
-    setClient(true);
-  }, []);
+    {
+      title: "Status",
+      key: "_id",
+      render: (row) => <StatusButton status={row?.property_status} />,
+    },
+    {
+      title: "Seller Name",
+      key: "_id",
+      render: (row) => (
+        <>
+          <span className=" text-[14px] font-normal text-info">
+            {row?.user_info?.full_name}
+          </span>
+        </>
+      ),
+    },
+    {
+      title: "Seller Details",
+      key: "_id",
+      render: (row) => (
+        <>
+          <button
+            onClick={() => {
+              setSellerDetailsModalOpen(true);
+              setGetSeller(row?.user_info);
+          }}
+            className={`bg-success/10 rounded text-xs py-0.5 text-success font-semibold flex items-center justify-center uppercase w-16`}
+          >
+            Details
+          </button>
+        </>
+      ),
+    },
 
-  useEffect(() => {
-    setLoading(true);
-    const GetData = async () => {
-      const query = `${searchQuery}`;
-      const res = await propertiesGet(query);
-      if (res) {
-        setFilterData(res);
-        setLoading(false);
-        setTotalItems(res?.data?.meta?.total);
-      } else {
-        setLoading(false);
-      }
-    };
-
-    GetData();
-
-    // if (currentlyLoggedIn) {
-    //   GetData();
-    // }else{
-    //   setLoading(false);
-    // }
-  }, [currentlyLoggedIn, searchQuery, update]);
-
-  const PagenationChange = (page, pageSiz) => {
-    setPage(page);
-  };
+    {
+      title: "Actions",
+      key: "_id",
+      render: (row) => (
+        <>
+          <div className="flex items-center gap-2 flex-wrap">
+            <VeiwButton />
+            <EditButton link="#" />
+            <DeleteButton
+              id={row?._id}
+              method={deleteProperty}
+              loading={deletePropertyLoading}
+              error={deletePropertyError}
+            />
+          </div>
+        </>
+      ),
+    },
+  ];
 
   return (
     <div>
       <div className=" flex items-center justify-between">
         <div>
-          <h3 className=" text-[17px] font-medium">
-            Welcome, {currentlyLoggedIn?.name}
-          </h3>
           <h2 className=" text-[25px] font-semibold">All Properties</h2>
           <BreakCame
-            type="/admin"
+            type="/dashboar/admin"
             data={[{ title: "All Properties", url: "all-properties" }]}
           />
         </div>
@@ -85,9 +149,9 @@ function MyProperties() {
           <button
             onClick={() =>
               router.push(
-                user === "admin"
-                  ? "/admin/properties/add"
-                  : "/user/add-properties"
+                user?.user_role === "admin"
+                  ? "/dashboard/admin/properties/add"
+                  : "/dashboard/sellers/add-properties"
               )
             }
             className=" flex items-center gap-1 py-2 px-3 text-sm bg-primary rounded-md hover:bg-blue-600 duration-300 text-white"
@@ -104,54 +168,26 @@ function MyProperties() {
       </div>
 
       <div className=" bg-white shadow-sm rounded-md mt-5">
-        <div className=" hidden md:block p-5">
-          <PropertySearch />
-        </div>
+        <div className=" hidden md:block p-5"><PropertySearch setSearchValue={setSearchValue} /></div>
 
-        {client ? (
-          <>
-            <div>
-              {loading ? (
-                <div className=" h-[400px] flex items-center justify-center">
-                  <Loader />
-                </div>
-              ) : (
-                <div>
-                  <MyPropertyAdminTable
-                    tableData={filterData?.data?.data}
-                    token={token}
-                    setUpdate={setUpdate}
-                    user="admin"
-                    pageSize={limit}
-                    currentPage={page}
-                    userType="admin"
-                  />
-                </div>
-              )}
-              {
-                <div className=" py-4 flex items-center justify-between px-4">
-                  <div className="text-light-black font-medium text-[14px] text-[#68769F]">
-                    {`Showing ${page * limit - limit + 1} - ${Math.min(
-                      page * limit,
-                      totalItems
-                    )} of ${totalItems}`}
-                  </div>
-                  <Pagination
-                    defaultCurrent={page}
-                    total={totalItems}
-                    pageSize={limit}
-                    onChange={PagenationChange}
-                    showSizeChanger={false}
-                  />
-                </div>
-              }
+        <div>
+          {isLoading ? (
+            <div className=" h-[400px] flex items-center justify-center">
+              <Loader />
             </div>
-          </>
-        ) : (
-          <></>
-        )}
+          ) : (
+            <div>
+              <CustomTable
+                tableData={allProperty}
+                columns={columns}
+                scroll={{}}
+              />
+            </div>
+          )}
+        </div>
       </div>
-      <Drawer
+
+      {/* <Drawer
         title="Filter Properties"
         placement="right"
         closable={true}
@@ -161,9 +197,10 @@ function MyProperties() {
         <div className="p-5">
           <PropertySearch />
         </div>
-      </Drawer>
+      </Drawer> */}
+      <SellerDetailsModal data={getSeller} sellerDetailsModalOpen={sellerDetailsModalOpen} setSellerDetailsModalOpen={setSellerDetailsModalOpen} />
     </div>
   );
 }
 
-export default MyProperties;
+export default AllProperties;

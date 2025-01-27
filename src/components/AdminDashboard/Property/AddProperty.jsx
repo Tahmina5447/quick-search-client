@@ -3,10 +3,8 @@
 import BdAddressSelect3 from "@/shared/BdAddressSelect3";
 import CustomInput from "@/shared/Input/CustomInput";
 import DropImageCom from "@/shared/Input/DropImageCom";
-import React, { useContext, useState } from "react";
+import React, {useState } from "react";
 import { useForm } from "react-hook-form";
-import { ContextData } from "../../../../context/dataProviderContext";
-import { propertyPost } from "../../../../apis/properties.api";
 import BreakCame from "@/shared/BreakCame";
 import { toast } from "react-toastify";
 import { IoCloseSharp } from "react-icons/io5";
@@ -24,13 +22,8 @@ function AddProperty({ title, data }) {
   const [propertyType, setPropertyType] = useState("residential");
   const [residentialTypeActive, setResidentialTypeActive] =
     useState("apartment");
-  // const [imageUploadErrorMessage, setImageUploadErrorMessage] = useState(null);
   const [imageUrl, setImageUrl] = useState([]);
-  // const [imageLoading, setImageLoading] = useState(false);
   const [rent, setRent] = useState("sell");
-  const [loading, setLoading] = useState(false);
-  // const [error, setError] = useState("");
-  // const [sucess, setSuccess] = useState("");
   const [commercialTypeActive, setCommercialTypeActive] = useState("office");
   const [messageShow, setMessageShow] = useState(false);
   const [addProperty, { isLoading, error }] = useAddPropertyMutation();
@@ -39,36 +32,12 @@ function AddProperty({ title, data }) {
   const residentialType = [
     "apartment",
     "house",
-    "plot",
-    "sublet",
-    "duplex",
-    "penthouse",
-    "studio",
-    "room",
-    "hostel",
-    "garage",
-    "farmhouse",
-    "condo",
-    "bungalow",
-    "building",
-    "villa",
-    "plaza",
     "other",
   ];
 
   const commercialType = [
     "office",
     "shop",
-    "showroom",
-    "restaurant",
-    "warehouse",
-    "factory",
-    "land",
-    "building",
-    "apartment",
-    "floor",
-    "duplex",
-    "plaza",
     "other",
   ];
 
@@ -86,8 +55,9 @@ function AddProperty({ title, data }) {
     reset,
     trigger,
   } = useForm();
-
+  
   const onSubmit = async (values) => {
+   
     try {
       const body = {
         property_name: values?.property_name,
@@ -97,7 +67,7 @@ function AddProperty({ title, data }) {
         price: Number(values?.price),
         video: values?.video,
         map: updateIframeCode(values?.map),
-        images: imageUrl,
+        property_images: imageUrl,
         address: {
           property_division: division,
           property_district: district,
@@ -109,10 +79,7 @@ function AddProperty({ title, data }) {
           phone: values.phone,
           email: values?.email,
         },
-        user_info: {
-          user_type: user?.user_role,
-          user_id: user?._id,
-        },
+        user_info:user,
       };
 
       if (rent === "sell") {
@@ -148,8 +115,10 @@ function AddProperty({ title, data }) {
       }
       const response = await addProperty(body);
       if (response?.data?.status === "success") {
-        toast.success("Property added successfully!");
         setMessageShow(true);
+        setImageUrl([]);
+        reset();
+        toast.success("Property added successfully!");
       } else if (response?.error) {
         toast.error(response?.error?.data?.message);
       }
@@ -728,7 +697,7 @@ function AddProperty({ title, data }) {
           <DropImageCom imageUrls={imageUrl} setImageUrls={setImageUrl} />
           <div className=" mt-6">
             <button
-              disabled={isLoading}
+              // disabled={isLoading}
               type="submit"
               className=" bg-primary text-white w-full py-3 text-sm rounded-lg font-semibold"
             >

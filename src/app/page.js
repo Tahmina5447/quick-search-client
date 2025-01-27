@@ -13,7 +13,7 @@ export default function Home() {
   return (
     <>
       <div className="relative">
-        {/* <Banner /> */}
+        <Banner />
         {/* <Properties />
         <Neighborhood />
         <BestProject />

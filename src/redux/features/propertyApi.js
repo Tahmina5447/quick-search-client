@@ -3,9 +3,9 @@ import { apiSlice } from "../api/apiSlice";
 
 const propertyApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    getCategory: builder.query({
-      query: () => ({
-        url: "category",
+    getProperty: builder.query({
+      query: (query) => ({
+        url: `property?${query}`,
         method: "GET",
       }),
       providesTags: ["property"],
@@ -26,9 +26,9 @@ const propertyApi = apiSlice.injectEndpoints({
       }),
       invalidatesTags: ["property"],
     }),
-    deleteCategory: builder.mutation({
+    deleteProperty: builder.mutation({
       query: (id) => ({
-        url: `category/${id}`,
+        url: `property/${id}`,
         method: "DELETE",
       }),
       invalidatesTags: ["property"],
@@ -37,8 +37,8 @@ const propertyApi = apiSlice.injectEndpoints({
 });
 
 export const {
-  useGetCategoryQuery,
+  useGetPropertyQuery,
   useAddPropertyMutation,
   useUpdateCategoryMutation,
-  useDeleteCategoryMutation,
+  useDeletePropertyMutation,
 } = propertyApi;

@@ -7,28 +7,30 @@ import BdAddressSelectFilter from "../BdAddressSelectFilter";
 import { ContextData } from "../../../context/dataProviderContext";
 import Priority from "./Priority";
 import Status from "./Status";
+import SearchInput from "../Input/SearchInput";
 
-function PropertySearch() {
-  const [activeBuy, setActiveBuy] = useState("");
-  const [activeResidential, setActiveResidential] = useState("");
-  const {
-    setUpazilaFilter,
-    divisionFilter,
-    setDivisionFilter,
-    setDistrictFilter,
-    clearFilter,
-    residentialTypeFilter,
-    commercialTypeFilter,
-    completionStatusForSell,
-    bathroomFilter,
-    bedroomFilter,
-    upazilaFilter,
-    districtFilter,
-    propertyTypeFilter,
-    rentFilter,
-    priority,
-    publishStatus
-  } = useContext(ContextData);
+function PropertySearch({setSearchValue}) {
+  // const [activeBuy, setActiveBuy] = useState("");
+  // const [activeResidential, setActiveResidential] = useState("");
+  
+  // const {
+  //   setUpazilaFilter,
+  //   divisionFilter,
+  //   setDivisionFilter,
+  //   setDistrictFilter,
+  //   clearFilter,
+  //   residentialTypeFilter,
+  //   commercialTypeFilter,
+  //   completionStatusForSell,
+  //   bathroomFilter,
+  //   bedroomFilter,
+  //   upazilaFilter,
+  //   districtFilter,
+  //   propertyTypeFilter,
+  //   rentFilter,
+  //   priority,
+  //   publishStatus
+  // } = useContext(ContextData);
 
   const data1 = [
     {
@@ -48,11 +50,14 @@ function PropertySearch() {
       title: "commercial",
     },
   ];
-
   return (
     <div className=" my-3 w-full mx-auto">
       <div className="grid lg:grid-cols-4 md:grid-cols-3 w-full gap-3">
-        <div className="w-full">
+        {/* search by sellr name...................................... */}
+        <div>
+          <SearchInput title={"Search by seller name"} placeholder={"Seller Name"} setValue={setSearchValue}/>
+        </div>
+        {/* <div className="w-full">
           <RentBuy
             activeBuy={activeBuy}
             setActiveBuy={setActiveBuy}
@@ -80,13 +85,13 @@ function PropertySearch() {
           setSelectedDistrict={setDistrictFilter}
           setSelectedDivision={setDivisionFilter}
           setSelectedUpazila={setUpazilaFilter}
-        />
+        /> */}
         {/* <div className="w-full">
           <Area />
         </div> */}
 
         <div>
-          <button
+          {/* <button
             onClick={() => {
               clearFilter();
               setActiveBuy("");
@@ -100,13 +105,17 @@ function PropertySearch() {
               commercialTypeFilter ||
               completionStatusForSell ||
               bathroomFilter ||
-              bedroomFilter || propertyTypeFilter || rentFilter || priority || publishStatus
+              bedroomFilter ||
+              propertyTypeFilter ||
+              rentFilter ||
+              priority ||
+              publishStatus
                 ? " bg-red-500 text-white"
                 : ""
             }`}
           >
             Clear Filter
-          </button>
+          </button> */}
         </div>
       </div>
     </div>

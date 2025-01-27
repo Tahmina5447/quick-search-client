@@ -4,8 +4,8 @@ import { apiSlice } from "../api/apiSlice";
 const bannerApi = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     getBanner: builder.query({
-      query: () => ({
-        url: "/banner?sort=position",
+      query: (query) => ({
+        url: `/banner?sort=position&${query}`,
         method: "GET",
       }),
       providesTags: ["banner"],
@@ -19,10 +19,10 @@ const bannerApi = apiSlice.injectEndpoints({
       invalidatesTags: ["banner"],
     }),
     updateBanner: builder.mutation({
-      query: ({data,id}) => ({
+      query: ({body,id}) => ({
         url:`banner/${id}`,
         method: "PATCH",
-        body: data,
+        body: body,
       }),
       invalidatesTags: ["banner"],
     }),

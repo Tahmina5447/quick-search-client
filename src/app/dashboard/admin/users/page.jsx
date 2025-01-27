@@ -1,4 +1,4 @@
-import AllUser from '@/components/Dashboard/AllUser/AllUser'
+import AllUser from '@/components/Dashboard/AllSellers/AllUser'
 import React from 'react'
 
 const User = () => {

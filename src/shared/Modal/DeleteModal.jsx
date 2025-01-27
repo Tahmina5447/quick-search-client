@@ -1,15 +1,30 @@
 import { Modal } from "antd";
 import React from "react";
+import { MdDeleteForever } from "react-icons/md";
+import { toast } from "react-toastify";
 
 const DeleteModal = ({
+  id,
+  deleteMethod,
+  loading,
+  error,
   modalOPen,
   setModalOpen,
-  className,
-  title,
-  title2,
-  onDelete=()=>{},
-  isLoading=false
 }) => {
+  const handleDelete = async (id) => {
+    try {
+      const response = await deleteMethod(id);
+      if (response?.data?.status === "success") {
+        toast.success("Property deleted successfully!");
+        setModalOpen(false)
+      } else if (response?.error) {
+        toast.error(response?.error?.data?.message);
+      }
+    } catch (error) {
+      toast.error(error?.data?.message || "Property delete failed. Try again!");
+    }
+  };
+
   return (
     <div className="">
       <Modal
@@ -23,20 +38,19 @@ const DeleteModal = ({
         onOk={() => setModalOpen(false)}
         onCancel={() => setModalOpen(false)}
         width={450}
-        className={` bg-red-500 pt-3 rounded-[30px]`}
+        className={` bg-red-500 pt-3 rounded-[25px]`}
       >
         <div className="">
           <div className=" rounded-[30px]">
-            {/* <div className=" mb-3">
-              <img src="/Images/delete.svg" alt="" />
-            </div> */}
-            <div >
-              <h2 className=" text-[24px] font-[700] text-[#1B2559]">
-                {title}
+            <div>
+              <h2 className=" text-[24px] font-[700] text-[#1B2559] text-center">
+                Are You Sure?
               </h2>
-              <p className="text-[16px] font-[400] text-info">
-               {title2}
-              </p>
+            </div>
+          </div>
+          <div className="flex items-center justify-center">
+            <div className="flex items-center justify-center h-16 my-3 w-16 bg-error/10 rounded-full">
+              <MdDeleteForever className="text-4xl text-error" />
             </div>
           </div>
 
@@ -48,12 +62,11 @@ const DeleteModal = ({
               Cancel
             </button>
             <button
-              onClick={() => {
-                onDelete();
-              }}
+              onClick={() => handleDelete(id)}
+              disabled={loading}
               className="font-bold w-full  h-[40px] px-6 rounded-[10px] bg-red-500 hover:bg-red-700 duration-300 border border-red-500 text-white "
             >
-              {isLoading ? "Loading...": "Delete"} 
+              {loading ? "Loading..." : "Delete"}
             </button>
           </div>
         </div>

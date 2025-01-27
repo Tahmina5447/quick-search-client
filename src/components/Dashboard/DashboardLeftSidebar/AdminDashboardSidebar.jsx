@@ -142,7 +142,7 @@ const DashboardSidebarAdmin = (props) => {
     <div className=" w-[17rem] max-w-[15rem] bg-white text-gray overflow-y-auto  md:h-screen h-full relative">
       <div className=" pt-5 flex items-center flex-col justify-center">
         <div className=" m-2 w-[45px] h-[45px] rounded-full shadow-lg bg-gray-200 flex items-center gap-5 ">
-          <Image
+          <img
             src={
               user?.profile_image
                 ? user?.profile_image
@@ -154,12 +154,12 @@ const DashboardSidebarAdmin = (props) => {
             className=" rounded-full w-full h-full object-cover"
           />
         </div>
-        <h2 className=" font-semibold text-gray-500">
+        <p className=" font-semibold text-gray-500">
           {user?.full_name}
-        </h2>
-        <h2 className="text-sm text-gray-500 first-letter:uppercase">
+        </p>
+        <p className="text-sm text-gray-500 first-letter:uppercase">
           {user?.email}
-        </h2>
+        </p>
       </div>
 
       <div>
